@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <ul>
+            <li class="dropdown">
+              <a href="javascript:void(0)" class="dropbtn"><img src="burger-bar.png" alt="burger" class="burger"></a>
+              <div class="dropdown-content">
+                <a href="index.html">Thoughts</a>
+                <a href="planner.html">Planner</a>
+                <a href="todo.html">To Do</a>
+              </div>
+            </li>
+          </ul>
+    <div class="header-text">
+        <h1>POST</h1>
+        <p>Your Thoughts</p>
+    </div>
+    </header>
+
+    <div class="submit-post">
+        <form class="post-form">
+            <input type="text" placeholder="Title" class="title">
+            <textarea placeholder="Your Post" class="post-area"></textarea>
+            <input type="submit" value="Post" class="submit-blog">
+        </form>
+    </div>
+
+    <div class="submitted-posts">
+        <h1>All Posts</h1>
+    </div>
+
+    <!-- Load Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            console.log("DOM fully loaded and parsed.");
+
+            // Initialize Supabase Client
+            const SUPABASE_URL = 'https://btyoxtxkrhcxnnmojdxp.supabase.co';
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0eW94dHhrcmhjeG5ubW9qZHhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk5NzAxMTMsImV4cCI6MjA1NTU0NjExM30.Y96_ozLnKHo4qPNdNq4J2dPiQGgFuRWkERB2kfQeF9g';
+
+            const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+            // Submit Post Function
+            async function submitPost(event) {
+                event.preventDefault(); // Prevent form reload
+
+                const titleElement = document.querySelector('.title');
+                const postElement = document.querySelector('.post-area');
+
+                if (titleElement && postElement) {
+                    const title = titleElement.value.trim();
+                    const content = postElement.value.trim();
+
+                    if (title && content) {
+                        // Save post to Supabase
+                        const { data, error } = await supabaseClient
+                            .from('posts')
+                            .insert([{ title, content }])
+                            .select();
+
+                        if (error) {
+                            console.error('Error saving post:', error);
+                            alert('An error occurred while saving the post.');
+                        } else {
+                            console.log('Post saved successfully:', data);
+                            titleElement.value = '';
+                            postElement.value = '';
+                            fetchPosts(); // Refresh posts
+                        }
+                    } else {
+                        alert('Please fill in both the title and the post content.');
+                    }
+                } else {
+                    console.error('One or more elements could not be found.');
+                }
+            }
+
+            // Fetch and Display Posts Function
+            async function fetchPosts() {
+                const allPosts = document.querySelector('.submitted-posts');
+
+                if (allPosts) {
+                    const { data, error } = await supabaseClient
+                        .from('posts')
+                        .select('*')
+                        .order('created_at', { ascending: false });
+
+                    if (error) {
+                        console.error('Error fetching posts:', error);
+                        alert('An error occurred while fetching posts.');
+                    } else {
+                        allPosts.innerHTML = '<h1>All Posts</h1>';
+                        data.forEach(post => {
+                            const newPost = document.createElement('div');
+                            newPost.classList.add('post');
+                            newPost.innerHTML = `
+                                <div class='post-info'>
+                                <h2>${post.title}</h2>
+                                <p>${post.content}</p>
+                                </div>
+                                <button class="delete-button" data-id="${post.id}">&times;</button>
+                            `;
+
+                            // Add event listener for delete button
+                            newPost.querySelector('.delete-button').addEventListener('click', function () {
+                                deletePost(post.id, newPost);
+                            });
+
+                            allPosts.appendChild(newPost);
+                        });
+                    }
+                } else {
+                    console.error('The "submitted-posts" element could not be found.');
+                }
+            }
+
+            // Delete Post Function
+            async function deletePost(postId, postElement) {
+                const { error } = await supabaseClient
+                    .from('posts')
+                    .delete()
+                    .eq('id', postId);
+
+                if (error) {
+                    console.error('Error deleting post:', error);
+                    alert('Failed to delete the post.');
+                } else {
+                    console.log('Post deleted successfully.');
+                    postElement.remove(); // Remove from DOM
+                }
+            }
+
+            // Attach event listener
+            document.querySelector('.post-form').addEventListener('submit', submitPost);
+            fetchPosts(); // Fetch posts when page loads
+        });
+
+
+    </script>
+</body>
+</html>

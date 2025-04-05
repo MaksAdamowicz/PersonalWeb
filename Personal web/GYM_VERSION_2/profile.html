@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+}
+.navbar {
+    background-color: #4CAF50;
+    height: 4.5vw;
+    padding: 10px;
+    margin-bottom: 20px;
+    display: flex; /* Use flexbox for alignment */
+    justify-content: center; /* Space elements between left and right */
+    align-items: center; /* Vertically center items */
+}
+
+.nav-links {
+    display: flex; /* Use flexbox to align nav links in a row */
+}
+
+.nav-links a {
+    color: white;
+    padding: 14px 20px;
+    text-decoration: none;
+    font-size: 17px;
+    transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+    color: #d1ffdb;
+}
+
+.profile-picture {
+    width: 30%;
+    height: auto;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 5%;
+}
+
+.profile-info {
+    text-align: center;
+    margin: 0 auto; /* Center the div horizontally */
+    margin-top: 5%;
+}
+
+.select-picture {
+    background-color: #4fae52;
+    border: none;
+    font-size: 17px;
+    color: white;
+    cursor: pointer;
+    padding: 10px 20px;
+    border-radius: 10px;
+}
+.select-picture:hover {
+    background-color: #45a049;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    font-family: Arial, sans-serif; /* Added font for better readability */
+}
+
+.navbar {
+    width: 100%;
+    background-color: #4CAF50;
+    height: 4.5vw;
+    padding: 20px;
+    display: flex;
+    justify-content: center; /* Center the navbar items */
+    align-items: center; /* Vertically center items */
+    margin-bottom: 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+}
+
+.nav-links {
+    display: flex; /* Use flexbox to align nav links in a row */
+    justify-content: center; /* Ensure the links are centered within the navbar */
+    gap: 20px; /* Optional: add some space between the navbar items */
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 17px;
+    transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+    color: #d1ffdb;
+}
+
+.profile-link img {
+    height: 30px;
+    vertical-align: middle;
+}
+
+.logout-btn {
+    background-color: #4fae52;
+    border: none;
+    font-size: 17px;
+    color: white;
+    cursor: pointer;
+    padding: 0;
+}
+
+.add-data-btn {
+    background-color: #4fae52;
+    border: none;
+    font-size: 17px;
+    color: white;
+    cursor: pointer;
+    padding: 10px 20px;
+    margin-top: 10px;
+    border-radius: 10px;
+}
+.add-data-btn:hover {
+    background-color: #45a049;
+}
+
+</style>
+</head>
+<body>
+    <div class="navbar">
+        <!-- Navigation links -->
+        <div class="nav-links">
+            <a href="index.html" class="profile-link">
+                <img src="calendar.svg" alt="calendar" style="height: 30px; vertical-align: middle;">
+            </a>
+            <a href="profile.html" class="profile-link">
+                <img src="profile.png" alt="Profile" style="height: 30px; vertical-align: middle;">
+            </a>
+            <a href="progress.html" class="profile-link">
+                <img src="progress.svg" alt="progress" style="height: 30px; vertical-align: middle;">
+            </a>
+        </div>
+    </div>
+
+    <div class="profile-info">
+        <img src="profile.png" alt="profile-picture" class="profile-picture">
+        
+        <h2>Username: <span id="displayName"></span></h2>
+        <p>Email: <span id="displayEmail"></span></p>
+        <p>Weight: <span id="displayWeight"></span></p>
+        <p>Height: <span id="displayHeight"></span></p>
+        <p>Age: <span id="displayAge"></span></p>
+        <p>Gender: <span id="displayGender"></span></p>
+        <p>My goal: <span id="displayGoal"></span></p>
+        <button onclick="changeEmail()" class="select-picture">Change email</button>
+        <button id="logout-button" class="select-picture" onclick="logout()">Logout</button>
+        <button onclick="changeInfo()" class="select-picture">Change Info</button>
+        <a href="ai_analysis.html">Analyze me</a>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script>
+        const SUPABASE_URL = 'https://lsuwpborfzjjmtboajht.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxzdXdwYm9yZnpqam10Ym9hamh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzE2ODgzMTEsImV4cCI6MjA0NzI2NDMxMX0.gqe63IPUIhZi5mlnCN5xMkRY54W9TBVlIgu6FarSs1Q';
+        const weight = document.getElementById('displayWeight');
+        const height = document.getElementById('displayHeight');
+        const age = document.getElementById('displayAge');
+        const gender = document.getElementById('displayGender');
+        const goal = document.getElementById('displayGoal');
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        async function loadUserData() {
+            try {
+                const { data: { user }, error } = await supabase.auth.getUser();
+                
+                if (error || !user) {
+                    console.error('Error fetching user:', error?.message || 'No user object found');
+                    alert('Error: Unable to identify user. Please log in again.');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                // Display user data
+                const displayName = document.getElementById('displayName');
+                const displayEmail = document.getElementById('displayEmail');
+
+                displayName.textContent = user.user_metadata?.full_name || 'N/A';
+                displayEmail.textContent = user.email || 'N/A';
+            } catch (e) {
+                console.error('Unexpected error during user data retrieval:', e);
+                alert('An unexpected error occurred. Please try again.');
+                window.location.href = 'login.html';
+            }
+        
+
+
+            document.getElementById('displayName').textContent = user.user_metadata.full_name || 'N/A';
+            document.getElementById('displayEmail').textContent = user.email || 'N/A';
+            weight.textContent = profile.weight || 'N/A';
+            height.textContent = profile.height || 'N/A';
+            age.textContent = profile.age || 'N/A';
+            gender.textContent = profile.gender || 'N/A';
+            goal.textContent = profile.goal || 'N/A';
+        }
+
+        async function changeInfo() {
+            const newWeight = prompt('Enter your new weight:');
+            const newHeight = prompt('Enter your new height:');
+            const newAge = parseInt(prompt('Enter your new age:'), 10);
+            const newGender = prompt('Enter your new gender:');
+            const newGoal = prompt('Enter your new goal:');
+
+            if (newWeight && newHeight && newAge && newGender && newGoal) {
+                const { data: { user }, error } = await supabase.auth.getUser();
+
+                if (error || !user) {
+                    alert('Error: Unable to identify user. Please log in again.');
+                    return;
+                }
+
+                const { error: updateError } = await supabase
+                    .from('profiles')
+                    .update({
+                        weight: newWeight,
+                        height: newHeight,
+                        age: newAge,
+                        gender: newGender,
+                        goal: newGoal
+                    })
+                    .eq('user_id', user.id);
+
+                if (updateError) {
+                    console.error('Error updating profile:', updateError.message);
+                    alert('Error updating profile information.');
+                    return;
+                }
+
+                alert('Profile information updated successfully.');
+                loadUserData();
+            } else {
+                alert('All fields are required.');
+            }
+        }
+
+        async function logout() {
+            await supabase.auth.signOut();
+            window.location.href = 'login.html';
+        }
+
+        async function changeEmail() {
+            const newEmail = prompt('Enter your new email address:');
+            if (newEmail) {
+                const { error: authError } = await supabase.auth.updateUser({ email: newEmail });
+                if (authError) {
+                    console.error('Error updating email in auth:', authError.message);
+                    alert('Error updating email.');
+                    return;
+                }
+
+                alert('Email updated successfully.');
+            }
+        }
+
+        loadUserData();
+    </script>
+</body>
+
+</html>

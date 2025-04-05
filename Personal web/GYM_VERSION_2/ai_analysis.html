@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Training Plan Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .navbar {
+            background-color: #4CAF50;
+            height: 4.5vw;
+            padding: 10px;
+            margin-bottom: 20px;
+            display: flex; /* Use flexbox for alignment */
+            justify-content: center; /* Space elements between left and right */
+            align-items: center; /* Vertically center items */
+        }
+
+        .nav-links {
+            display: flex; /* Use flexbox to align nav links in a row */
+        }
+
+        .nav-links a {
+            color: white;
+            padding: 14px 20px;
+            text-decoration: none;
+            font-size: 17px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #d1ffdb;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+            color: #444;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+        input{
+            width: 90%;
+        }
+        button {
+            background-color: #4fae52;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #4fae52;
+        }
+        .output {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .copy-button {
+            margin-top: 10px;
+            padding: 12px;
+            background-color: #4fae52;
+            color: white;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+        }
+        .copy-button:hover {
+            background-color: #4fae53;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .section-content {
+            margin-bottom: 20px;
+        }
+        ul {
+            padding-left: 20px;
+            list-style-type: disc;
+        }
+        li {
+            font-size: 16px;
+            color: #444;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Custom Training Plan Generator</h1>
+        <form id="trainingForm">
+            <label for="weight">Weight (kg):</label>
+            <input type="number" id="weight" name="weight" required>
+
+            <label for="height">Height (cm):</label>
+            <input type="number" id="height" name="height" required>
+
+            <label for="goal">Training Goal:</label>
+            <select id="goal" name="goal" required>
+                <option value="muscle">Build Muscle</option>
+                <option value="weight-loss">Lose Weight</option>
+                <option value="endurance">Improve Endurance</option>
+            </select>
+
+            <label for="experience">Experience Level:</label>
+            <select id="experience" name="experience" required>
+                <option value="beginner">Beginner</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="advanced">Advanced</option>
+            </select>
+
+            <label for="gender">Gender:</label>
+            <select id="gender" name="gender" required>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+            </select>
+
+            <label for="days">Available Training Days per Week:</label>
+            <input type="number" id="days" name="days" min="1" max="7" required>
+
+            <button type="button" onclick="generatePlan()">Generate Plan</button>
+        </form>
+
+        <div id="output" class="output" style="display:none;"></div>
+        <button id="copyButton" class="copy-button" style="display:none;" onclick="copyPlan()">Copy Exercises</button>
+    </div>
+    <div class="navbar">
+        <!-- Navigation links -->
+        <div class="nav-links">
+            <a href="index.html" class="profile-link">
+                <img src="calendar.svg" alt="calendar" style="height: 30px; vertical-align: middle;">
+            </a>
+            <a href="profile.html" class="profile-link">
+                <img src="profile.png" alt="Profile" style="height: 30px; vertical-align: middle;">
+            </a>
+            <a href="progress.html" class="profile-link">
+                <img src="progress.svg" alt="progress" style="height: 30px; vertical-align: middle;">
+            </a>
+        </div>
+    </div>
+
+    <script>
+        let exercises = [];
+        let diet = [];
+
+        function generatePlan() {
+            const weight = parseFloat(document.getElementById('weight').value);
+            const height = parseFloat(document.getElementById('height').value);
+            const goal = document.getElementById('goal').value;
+            const experience = document.getElementById('experience').value;
+            const gender = document.getElementById('gender').value;
+            const days = parseInt(document.getElementById('days').value);
+
+            if (!weight || !height || !goal || !experience || !gender || !days) {
+                alert('Please fill out all fields.');
+                return;
+            }
+
+            let bmi = (weight / ((height / 100) ** 2)).toFixed(1);
+            let plan = `Training Plan:\n\n`;
+
+            plan += `BMI: ${bmi} (`;
+            if (bmi < 18.5) {
+                plan += `You are underweight. Consider focusing on gaining muscle mass and consuming more calories.\n`;
+            } else if (bmi >= 18.5 && bmi <= 24.9) {
+                plan += `Your BMI is normal. Maintain a balanced training routine and diet.\n`;
+            } else {
+                plan += `You are overweight. Incorporate more cardio and a caloric deficit in your diet.\n`;
+            }
+            plan += `)\n\n`;
+
+            exercises = [];
+            diet = [];
+
+            if (goal === 'muscle') {
+                plan += `Goal: Build Muscle\n`;
+                plan += days > 3 ? `Focus on gym-based compound lifts like squats, deadlifts, and bench press for 4 days a week.\nAdd 1-2 accessory exercises for arms and shoulders.\n` : `Focus on home exercises like push-ups, pull-ups, and resistance band training 3 times a week.\n`;
+
+                exercises = [
+                    "Squat (Barbell or Bodyweight)",
+                    "Deadlift (Conventional or Romanian)",
+                    "Bench Press (Barbell or Dumbbell)",
+                    "Pull-Up (Assisted if necessary)"
+                ];
+
+                diet = [
+                    "Protein-rich foods: Chicken, lean beef, tofu, eggs.",
+                    "Carbohydrates: Sweet potatoes, brown rice, quinoa, oats.",
+                    "Healthy fats: Avocados, almonds, olive oil.",
+                    "Caloric intake: Aim for a slight surplus of 200-500 calories above maintenance."
+                ];
+            } else if (goal === 'weight-loss') {
+                plan += `Goal: Lose Weight\n`;
+                plan += days > 3 ? `Combine gym cardio sessions with resistance training 4 times a week. Incorporate HIIT twice weekly.\n` : `Focus on home cardio (jump rope, burpees) and bodyweight exercises like squats and planks 3 times a week.\n`;
+
+                exercises = [
+                    "Jump Rope (3 minutes on, 1 minute rest)",
+                    "Burpees (3 sets of 15)",
+                    "Mountain Climbers (3 sets of 30 seconds)",
+                    "High-Intensity Interval Training (HIIT)"
+                ];
+
+                diet = [
+                    "Lean proteins: Fish, turkey, beans, Greek yogurt.",
+                    "Low-carb vegetables: Spinach, broccoli, cauliflower, zucchini.",
+                    "Fruits: Berries, apples, oranges.",
+                    "Caloric intake: Aim for a slight deficit of 200-500 calories below maintenance."
+                ];
+            } else if (goal === 'endurance') {
+                plan += `Goal: Improve Endurance\n`;
+                plan += days > 3 ? `Mix long-duration running or cycling with interval training at the gym 5 times a week.\n` : `Engage in brisk walking, jogging, or cycling outdoors for 3-4 days a week.\n`;
+
+                exercises = [
+                    "Long-Distance Running (30-60 minutes)",
+                    "Cycling (30-60 minutes)",
+                    "Interval Sprints (20 minutes)",
+                    "Swimming (30 minutes)"
+                ];
+
+                diet = [
+                    "Carbohydrates: Whole grains, pasta, rice, potatoes.",
+                    "Protein: Lean meats, eggs, dairy, legumes.",
+                    "Healthy fats: Nuts, seeds, olive oil.",
+                    "Caloric intake: Maintain a balanced diet with sufficient carbs to fuel endurance activities."
+                ];
+            }
+
+            plan += `\nExperience Level: ${experience.charAt(0).toUpperCase() + experience.slice(1)}\n`;
+            plan += `Gender: ${gender.charAt(0).toUpperCase() + gender.slice(1)}\n`;
+            plan += `Available Training Days: ${days}\n`;
+            plan += `Weight: ${weight} kg, Height: ${height} cm\n\n`;
+
+            const outputDiv = document.getElementById('output');
+            outputDiv.style.display = 'block';
+            outputDiv.innerHTML = `
+                <div class="section-title">Training Plan</div>
+                <div class="section-content">${plan}</div>
+                
+                <div class="section-title">Suggested Exercises</div>
+                <div class="section-content">
+                    <ul>${exercises.map(ex => `<li>${ex}</li>`).join('')}</ul>
+                </div>
+
+                <div class="section-title">Suggested Diet</div>
+                <div class="section-content">
+                    <ul>${diet.map(d => `<li>${d}</li>`).join('')}</ul>
+                </div>
+            `;
+
+            const copyButton = document.getElementById('copyButton');
+            copyButton.style.display = 'block';
+        }
+
+        function copyPlan() {
+            let exercisePlan = exercises.join("\n");
+            navigator.clipboard.writeText(exercisePlan)
+                .then(() => alert('Exercises copied to clipboard!'))
+                .catch(err => alert('Failed to copy exercises.'));
+        }
+    </script>
+</body>
+</html>

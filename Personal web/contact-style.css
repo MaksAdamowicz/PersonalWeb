@@ -1,0 +1,81 @@
+*{
+    padding: 0%;
+    margin: 0%;
+    box-sizing: border-box;
+}
+
+body{
+    font-family: 'Exo', sans-serif;
+}
+
+
+.navbar {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 20px;
+
+}
+
+.navbar a {
+    color: #333;
+    text-decoration: none;
+    font-size: 18px;
+
+}
+
+
+
+h1{
+    padding-top: 10vw;
+    text-align: center;
+    margin-bottom: 5%;
+}
+.contact-me{
+    display: flex;
+    justify-content: center;
+    gap: 10%;
+}
+
+input{
+    border: none;
+    border-bottom:  solid 1px;
+    border-color: #ccc;
+    margin: 2%;
+}
+
+.area{ 
+    background: rgb(255,255,255);
+    background: linear-gradient(210deg, rgba(255,255,255,1) 69%, rgba(60,221,244,1) 98%);
+    width: 100%;
+    height:100vh;
+}
+
+input:focus{
+    border: 1px solid;
+    
+}
+
+.send{
+    margin: 2%;
+    background-color: rgba(60,221,244,0.5);
+    padding: 10px;
+    border-radius: 5px;
+    text-decoration: none;
+    color: black;
+    position: relative;
+    top: 20px;
+    left: -8px;
+    
+}
+
+#message{
+    border: none;
+    background-attachment: local;
+    background-image:
+        linear-gradient(to right, white 10px, transparent 10px),
+        linear-gradient(to left, white 10px, transparent 10px),
+        repeating-linear-gradient(white, white 30px, #ccc 30px, #ccc 31px, white 31px);
+    line-height: 31px;
+    padding: 8px 10px;
+}

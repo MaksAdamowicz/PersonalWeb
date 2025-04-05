@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="register-style.css">
+</head>
+<body>
+<div id="login-container">
+    <h2>Login</h2>
+    
+    <form id="login-form">
+        <input type="email" id="email" placeholder="Email" required />
+        <input type="password" id="password" placeholder="Password" required />
+        <button type="submit">Login</button>
+        <a href="signup.html">Sign up</a>
+    </form>
+    <p id="message"></p>
+    <a href="#" id="forgot-password">Forgot Password?</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script>
+    // Initialize Supabase
+    const SUPABASE_URL = 'https://lsuwpborfzjjmtboajht.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxzdXdwYm9yZnpqam10Ym9hamh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzE2ODgzMTEsImV4cCI6MjA0NzI2NDMxMX0.gqe63IPUIhZi5mlnCN5xMkRY54W9TBVlIgu6FarSs1Q';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const loginForm = document.getElementById('login-form');
+    const message = document.getElementById('message');
+    const forgotPasswordLink = document.getElementById('forgot-password');
+
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        const { user, session, error } = await supabase.auth.signInWithPassword({
+            email: email,
+            password: password
+        });
+
+        if (error) {
+            message.textContent = `Error: ${error.message}`;
+            message.style.color = 'red';
+        } else {
+            window.location.href = 'progress.html';
+        }
+    });
+
+    forgotPasswordLink.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const email = prompt('Enter your email address to receive password reset link');
+        if (email) {
+            const { data, error } = await supabase.auth.resetPasswordForEmail(email);
+            if (error) {
+                message.textContent = `Error: ${error.message}`;
+                message.style.color = 'red';
+            } else {
+                message.textContent = `Password reset link sent to ${email}`;
+                message.style.color = 'green';
+            }
+        }
+    });
+</script>
+</body>
+</html>

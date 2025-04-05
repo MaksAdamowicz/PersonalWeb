@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Planner</title>
+    <link rel="stylesheet" href="style-planner.css">
+</head>
+<body>
+    <header>
+        <ul>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn"><img src="burger-bar.png" alt="Menu" class="burger"></a>
+                <div class="dropdown-content">
+                    <a href="index.html">Thoughts</a>
+                    <a href="planner.html">Planner</a>
+                    <a href="todo.html">To Do</a>
+                </div>
+            </li>
+        </ul>
+        <div class="header-text">
+            <h1>PLAN</h1>
+            <p>Your Projects</p>
+        </div>
+    </header>
+
+    <div class="submit-project">
+        <form class="project-form">
+            <input type="text" placeholder="Project Title" class="project-title" required>
+            <textarea placeholder="Project Description" class="project-description" required></textarea>
+            <input type="date" class="due-date" required>
+            <input type="number" class="progress-status" placeholder="Progress (0-100)" min="0" max="100" required>
+            <input type="submit" value="Add Project" class="submit-btn">
+        </form>
+    </div>
+
+    <div class="submitted-projects">
+        <h1>All Projects</h1>
+        <div id="projects-list"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", async function () {
+            const SUPABASE_URL = 'https://btyoxtxkrhcxnnmojdxp.supabase.co';
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0eW94dHhrcmhjeG5ubW9qZHhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk5NzAxMTMsImV4cCI6MjA1NTU0NjExM30.Y96_ozLnKHo4qPNdNq4J2dPiQGgFuRWkERB2kfQeF9g';
+            const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+            const form = document.querySelector('.project-form');
+            const projectsList = document.getElementById('projects-list');
+
+            async function fetchProjects() {
+                try {
+                    const { data, error } = await supabaseClient.from('projects').select('*').order('created_at', { ascending: false });
+                    if (error) throw error;
+                    projectsList.innerHTML = '';
+                    data.forEach(project => {
+                        const projectDiv = document.createElement('div');
+                        projectDiv.classList.add('project');
+                        projectDiv.innerHTML = `
+                            <div class="project-info">
+                                <h2 class="project-info-title">${project.name}</h2>
+                                <p class="project-info-description">${project.description}</p>
+                                <div class="progress-container">
+                                    <div class="progress-bar" style="width: ${project.progress}%;">${project.progress}%</div>
+                                </div>
+                                <button class="add-progress" data-id="${project.id}">+</button>
+                                <button class="subtract-progress" data-id="${project.id}">-</button>
+                                <p class="project-info-due-date"><strong>Due Date:</strong> ${project.date}</p>
+                            </div>
+                            <button class="delete-button" data-id="${project.id}">&times;</button>
+                        `;
+                        projectDiv.querySelector('.delete-button').addEventListener('click', async function () {
+                            await deleteProject(project.id, projectDiv);
+                        });
+                        projectDiv.querySelector('.add-progress').addEventListener('click', function () {
+                            updateProgress(project.id, project.progress + 10);
+                        });
+                        projectDiv.querySelector('.subtract-progress').addEventListener('click', function () {
+                            updateProgress(project.id, project.progress - 10);
+                        });
+                        projectsList.appendChild(projectDiv);
+                    });
+                } catch (error) {
+                    console.error('Error fetching projects:', error);
+                }
+            }
+
+            form.addEventListener('submit', async function (event) {
+                event.preventDefault();
+                const name = document.querySelector('.project-title').value.trim();
+                const description = document.querySelector('.project-description').value.trim();
+                const date = document.querySelector('.due-date').value;
+                const progress = parseInt(document.querySelector('.progress-status').value) || 0;
+                if (!name || !description || !date) {
+                    alert('Please fill in all fields.');
+                    return;
+                }
+                try {
+                    const { error } = await supabaseClient.from('projects').insert([{ name, description, date, progress }]);
+                    if (error) throw error;
+                    form.reset();
+                    fetchProjects();
+                } catch (error) {
+                    console.error('Error adding project:', error);
+                    alert('An error occurred while adding the project.');
+                }
+            });
+
+            async function updateProgress(projectId, newProgress) {
+                newProgress = Math.max(0, Math.min(100, newProgress));
+                try {
+                    const { error } = await supabaseClient.from('projects').update({ progress: newProgress }).eq('id', projectId);
+                    if (error) throw error;
+                    fetchProjects();
+                } catch (error) {
+                    console.error('Error updating progress:', error);
+                }
+            }
+
+            async function deleteProject(projectId, projectElement) {
+                try {
+                    const { error } = await supabaseClient.from('projects').delete().eq('id', projectId);
+                    if (error) throw error;
+                    projectElement.remove();
+                } catch (error) {
+                    console.error('Error deleting project:', error);
+                    alert('Failed to delete the project.');
+                }
+            }
+
+            fetchProjects();
+        });
+    </script>
+</body>
+</html>

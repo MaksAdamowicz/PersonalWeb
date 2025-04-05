@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Do List</title>
+    <link rel="stylesheet" href="style-todo.css">
+</head>
+<body>
+    <header>
+        <ul>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn"><img src="burger-bar.png" alt="burger" class="burger"></a>
+                <div class="dropdown-content">
+                    <a href="index.html">Thoughts</a>
+                    <a href="planner.html">Planner</a>
+                    <a href="todo.html">To Do</a>
+                </div>
+            </li>
+        </ul>
+        <div class="header-text">
+            <h1>MANAGE</h1>
+            <p>Your Tasks</p>
+        </div>
+    </header>
+    
+    <form class="task-form">
+        <input type="text" placeholder="Task Title" class="task-title">
+        <input type="text" placeholder="Task Description" class="task">
+        <input type="submit" value="Add Task" class="submit-task">
+    </form>
+
+    <div class="task-list" id="task-list">
+        <h1>All Tasks</h1>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            console.log("DOM fully loaded.");
+    
+            // ✅ Supabase credentials
+            const SUPABASE_URL = 'https://btyoxtxkrhcxnnmojdxp.supabase.co'; 
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0eW94dHhrcmhjeG5ubW9qZHhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk5NzAxMTMsImV4cCI6MjA1NTU0NjExM30.Y96_ozLnKHo4qPNdNq4J2dPiQGgFuRWkERB2kfQeF9g';
+    
+            const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    
+            // ✅ Add Task Function
+            async function addTask(event) {
+                event.preventDefault(); // Prevent form reload
+    
+                const titleElement = document.querySelector('.task-title');
+                const taskElement = document.querySelector('.task');
+    
+                if (titleElement && taskElement) {
+                    const title = titleElement.value.trim();
+                    const description = taskElement.value.trim();
+    
+                    if (title && description) {
+                        const { data, error } = await supabaseClient
+                            .from('tasks')
+                            .insert([{ title, content: description }])
+                            .select();
+    
+                        if (error) {
+                            console.error('Error saving task:', error);
+                            alert('Failed to save the task: ' + error.message);
+                        } else {
+                            console.log('Task saved successfully:', data);
+                            titleElement.value = '';
+                            taskElement.value = '';
+                            fetchTasks(); // Refresh task list
+                        }
+                    } else {
+                        alert('Please fill in both the task title and description.');
+                    }
+                } else {
+                    console.error('Input fields not found.');
+                }
+            }
+    
+            // ✅ Fetch and Display Tasks
+            async function fetchTasks() {
+                console.log("Fetching tasks...");
+                const taskListContainer = document.getElementById('task-list');
+                if (!taskListContainer) {
+                    console.error('Task list container not found.');
+                    return;
+                }
+    
+                const { data, error } = await supabaseClient
+                    .from('tasks')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+    
+                if (error) {
+                    console.error('Error fetching tasks:', error.message);
+                    alert('Failed to fetch tasks: ' + error.message);
+                    return;
+                }
+    
+                console.log("Fetched tasks:", data); // ✅ Debugging log
+    
+                // ✅ Clear previous tasks before displaying new ones
+                taskListContainer.innerHTML = '<h1>All Tasks</h1>';
+    
+                if (data.length === 0) {
+                    taskListContainer.innerHTML += '<p>No tasks available.</p>';
+                } else {
+                    data.forEach(task => {
+                        const newTask = document.createElement('div');
+                        newTask.classList.add('task-item');
+                        newTask.innerHTML = `
+                            <div class='task-info'>
+                                <h2>${task.title}</h2>
+                                <p>${task.content}</p>
+                            </div>
+                            <button class="delete-button" data-id="${task.id}">Done</button>
+                        `;
+    
+                        newTask.querySelector('.delete-button').addEventListener('click', function () {
+                            deleteTask(task.id, newTask);
+                        });
+    
+                        taskListContainer.appendChild(newTask);
+                    });
+                }
+            }
+    
+            // ✅ Delete Task Function
+            async function deleteTask(taskId, taskElement) {
+                const { error } = await supabaseClient
+                    .from('tasks')
+                    .delete()
+                    .eq('id', taskId);
+    
+                if (error) {
+                    console.error('Error deleting task:', error);
+                    alert('Failed to delete the task: ' + error.message);
+                } else {
+                    console.log('Task deleted successfully.');
+                    taskElement.remove(); // Remove from DOM
+                }
+            }
+    
+            // ✅ Attach event listener and fetch tasks on page load
+            document.querySelector('.task-form').addEventListener('submit', addTask);
+            fetchTasks();
+        });
+    </script>
+    
+</body>
+</html>

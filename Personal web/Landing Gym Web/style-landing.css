@@ -1,0 +1,463 @@
+body {
+    font-family: 'Lexend', 'Noto Sans', sans-serif;
+  }
+
+  
+  .design-root {
+    margin: 20px;
+  }
+  
+  .header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+
+  .till-launch{
+    text-align: center;
+  }
+  
+  .header-title {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .timer {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+    margin-top: 5%;
+    margin-bottom: 5%;
+  }
+  
+  .timer-section {
+    text-align: center;
+  }
+  
+  .timer-value {
+    font-size: 32px;
+    font-weight: bold;
+  }
+  
+  .timer-label {
+    font-size: 14px;
+    color: #666;
+  }
+  
+  .section-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+  
+  .services {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .service-card {
+    width: 100%;
+    height: 150px;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+/* Container for the icons */
+.icon-container {
+  width: 100%; /* Full width of the parent */
+  height: 100px; /* Adjust height based on icon size */
+  overflow: hidden; /* Hide anything that goes outside the container */
+  position: relative; /* Relative for positioning */
+  display: flex;
+  justify-content: space-around; /* Space the icons evenly */
+}
+
+/* Icons styling */
+.icon-container i {
+  font-size: 50px; /* Size of icons */
+  color: #333; /* Icon color */
+  position: relative;
+  display: inline-block; /* Keep icons in a line */
+  animation: bounce 4s ease-in-out infinite alternate; /* Bounce animation */
+}
+
+/* Bounce animation */
+@keyframes bounce {
+  0% {
+    transform: translateX(-200px); /* Start from the initial position */
+  }
+  100% {
+    transform: translateX(200px); /* Move to the right */
+  }
+}
+
+.icon-container img{
+  width: 40%;
+  height: auto;
+  margin: 20px;
+}
+  
+  .plans {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    
+  }
+  
+  .plan-card {
+    width: 30%;
+    padding: 20px;
+    border: 1px solid #ccc;
+    text-align: center;
+    
+
+  }
+  
+  .plan-card h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+  
+  .plan-card p {
+    font-size: 16px;
+  }
+  
+  .plan-card span {
+    font-size: 20px;
+    font-weight: bold;
+  }
+  
+  .schedule {
+    margin-top: 20px;
+  }
+  
+  .schedule-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .schedule-item svg {
+    margin-right: 10px;
+  }
+  
+  .schedule-item p {
+    margin: 0;
+  }
+  
+  .sub-text {
+    color: #666;
+    font-size: 12px;
+  }
+  
+  .subscribe {
+    color: black;
+    background-color:white ;
+    background-color: None;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: ease-out 0.3s;
+    position: relative;
+    overflow: hidden; /* Ensures that ::after stays within the button */
+  }
+  
+  .subscribe::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background-color: black;
+    transition: width 0.4s ease-out, left 0.4s ease-out;
+  }
+  
+  /* On hover, animate the border from center to sides */
+  .subscribe:hover::after {
+    width: 100%;
+    left: 0;
+  }
+  
+
+
+/* Mobile/Phone View Adjustments */
+@media (max-width: 768px) {
+  .design-root {
+    width: 90%;
+  }
+  /* Header */
+  .header-title {
+    font-size: 18px; /* Slightly smaller title font for better mobile readability */
+  }
+
+  /* Timer Section */
+  .timer {
+    flex-direction: column; /* Stack timer sections vertically */
+    align-items: center; /* Center the content */
+    margin: 20px 0; /* Add some vertical spacing */
+  }
+
+  .timer-section {
+    margin-bottom: 15px; /* Add spacing between timer sections */
+  }
+
+  .timer-value {
+    font-size: 24px; /* Decrease size of timer value for mobile screens */
+  }
+
+  .timer-label {
+    font-size: 12px; /* Smaller labels for timer sections */
+  }
+
+  /* Services Section */
+  .services {
+    flex-direction: column; /* Stack services vertically */
+    gap: 15px; /* Add space between service cards */
+  }
+
+  .service-card {
+    height: 120px; /* Adjust height to fit smaller screens */
+    font-size: 14px; /* Reduce font size to fit smaller cards */
+  }
+
+  /* Plans Section */
+  .plans {
+    flex-direction: column; /* Stack plans vertically */
+    gap: 15px; /* Add space between plan cards */
+
+  }
+
+  .plan-card {
+    width: 100%; /* Ensure full width for plan cards on mobile */
+    padding: 15px; /* Add padding for better mobile touch interaction */
+    margin-bottom: 15px; /* Add spacing between plan cards */
+  }
+
+  .plan-card h1 {
+    font-size: 20px; /* Reduce the heading font size for mobile */
+    margin-bottom: 10px; /* Add some space below the heading */
+  }
+
+  .plan-card p {
+    font-size: 14px; /* Adjust paragraph font size for readability on small screens */
+  }
+
+  .plan-card span {
+    font-size: 18px; /* Adjust price font size for clarity */
+  }
+
+  /* Schedule Section */
+  .schedule-item {
+    margin-bottom: 10px; /* Add spacing between schedule items */
+  }
+
+  /* Subscribe Button */
+  .subscribe {
+    font-size: 14px; /* Reduce button font size for mobile */
+    padding: 8px 12px; /* Adjust button padding for smaller screens */
+  }
+}
+
+
+.footer ul {
+  display: flex;
+  justify-content: center; /* Center links horizontally */
+  flex-wrap: wrap; /* Allow wrapping for small screens */
+  margin: 0; /* Reset margin */
+  padding: 0; /* Reset padding */
+  list-style: none; /* Remove list bullets */
+  gap: 20px; /* Space between links */
+}
+
+  li {
+    list-style: none;
+  }
+  
+  @media (min-width: 500px) {
+    ul {
+      grid-auto-flow: column;
+    }
+  }
+  
+  .footer a {
+    color: black; /* Link color */
+    text-decoration: none; /* Remove underline */
+    position: relative; /* For the border animation */
+    padding-bottom: 5px; /* Space for the animated border */
+  }
+  
+  /* Creating the border animation */
+  a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background-color: black;
+    transition: width 0.4s ease, left 0.4s ease;
+  }
+  
+  /* On hover, animate the border from center to sides */
+  a:hover::after {
+    width: 100%;
+    left: 0;
+  }
+  
+  .footer {
+    margin-top: 5%;
+    padding: 20px; /* Padding around footer */
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    align-items: center; /* Center items horizontally */
+    text-align: center; /* Center text */
+    border-top: 2px solid #ccc; /* Top border for separation */
+    border: 1px solid #ccc;
+  }
+  
+
+  @media (max-width: 500px) {
+    ul {
+      flex-direction: column; /* Stack list items vertically */
+      gap: 15px;
+    }
+  
+    a {
+      font-size: 0.9rem; /* Slightly smaller font size for links on small screens */
+    }
+  
+    footer {
+      height: auto; /* Allow footer to grow vertically on small screens */
+      padding: 20px; /* Add padding for better touch interaction on mobile */
+      text-align: center; /* Center the content on small screens */
+    }
+  } 
+
+
+
+/* Modal container (hidden by default) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed;
+  z-index: 100; /* Make sure it sits on top of other elements */
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+}
+
+/* Modal content box */
+.modal-content {
+  background-color: white;
+  margin: 15% auto; /* Center vertically */
+  padding: 20px;
+  width: 80%; /* Adjust as needed */
+  max-width: 500px;
+  border-radius: 8px;
+  position: relative;
+}
+
+/* Close button inside the modal */
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #333;
+}
+
+.close-btn:hover {
+  color: red;
+}
+
+
+/* Subscribe Form */
+
+.subscribe-form {
+  width: 100%; /* Full width for form */
+  max-width: 600px; /* Max width for form */
+  margin-top: 20px; /* Space above the form */
+  padding: 20px; /* Padding around the form */
+  border: 1px solid #ccc; /* Matching border */
+}
+
+.form-group {
+  margin-bottom: 15px; /* Space between form fields */
+}
+
+
+label {
+  display: block; /* Block display for labels */
+  
+  margin-bottom: 5px; /* Space below labels */
+  color: black; /* Text color */
+}
+
+.form-input {
+  margin-top: 2%;
+  width: 90%; /* Full width input */
+  padding: 10px; /* Padding for input */
+  border: 1px solid #ccc; /* Matching border */
+  border-radius: 4px; /* Rounded corners for inputs */
+  font-size: 16px; /* Font size */
+  font-family: 'Lexend', 'Noto Sans', sans-serif; /* Consistent font */
+}
+
+
+.submit-btn {
+  color: black;
+  background-color: White;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: ease-out 0.3s;
+  position: relative;
+  overflow: hidden; /* Ensures that ::after stays within the button */
+}
+
+.submit-btn::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background-color: black;
+  transition: width 0.4s ease-out, left 0.4s ease-out;
+}
+
+/* On hover, animate the border from center to sides */
+.submit-btn:hover::after {
+  width: 100%;
+  left: 0;
+}
+
+
+@media (max-width: 500px) {
+  .footer {
+      padding: 15px; /* Adjust footer padding for smaller screens */
+  }
+
+  .form-input, .submit-btn {
+      font-size: 14px; /* Smaller font size on mobile */
+      width: 90%; /* Full width for inputs and buttons */
+  }
+
+  .subscribe-form {
+      max-width: 90%; /* Allow full width on mobile */
+  }
+}
+

@@ -1,0 +1,196 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Verdana, sans-serif;
+}
+
+header {
+    background-color: #f1f1f1;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Ensures text is centered */
+    position: relative; /* Needed for absolute positioning of dropdown */
+}
+
+/* Ensures the header text stays centered */
+.header-text {
+    text-align: center;
+    flex: 1;
+}
+
+header h1 {
+    font-size: 3em;
+    color: #333;
+}
+
+header p {
+    font-size: 1.5em;
+    color: #666;
+}
+
+/* Dropdown menu positioned on the left */
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%); /* Centers it vertically */
+    width: auto;
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+li {
+    position: relative;
+}
+
+/* Menu button */
+li a, .dropbtn {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+li a:hover, .dropdown:hover .dropbtn {
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+
+/* Dropdown container */
+li.dropdown {
+    display: block;
+}
+
+.burger{
+    width: 20px;
+    height: auto;
+}
+
+/* Hidden dropdown content */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+}
+
+.dropdown-content.show {
+    display: block; /* Ensure the dropdown stays visible */
+}
+
+/* Dropdown links */
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+
+/* Show dropdown on hover */
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* Post submission section */
+.submit-post {
+    padding: 20px;
+    background-color: #f1f1f1;
+    margin-top: 20px;
+}
+
+/* Post form layout */
+.post-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.post-form input[type="text"],
+.post-form textarea {
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1.2em;
+}
+
+/* Submit button */
+.post-form input[type="submit"] {
+    padding: 10px 20px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: 0.5s;
+}
+
+.post-form input[type="submit"]:hover {
+    background-color: #666;
+}
+
+/* Submitted posts section */
+.submitted-posts {
+    padding: 20px;
+    background-color: #f1f1f1;
+    margin-top: 20px;
+}
+
+.post {
+    padding: 20px;
+    background-color: #fff;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+/* Posts header */
+.submitted-posts h1 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Delete button */
+.delete-button {
+    width: 50px;
+    height: 50px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 0.7em;
+    cursor: pointer;
+    margin-top: 5px;
+    transition: 0.5s;
+}
+
+.post-info {
+    width: 90%;
+}
+
+/* Hover effect for delete button */
+.delete-button:hover {
+    background-color: #666;
+
+}
+
+/* Hover effect for posts */
+.post:hover {
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Exercise</title>
+    <link rel="stylesheet" href="progress-style.css">
+</head>
+
+<body>
+
+
+    <div class="container">
+        <h1>Exercise Tracker</h1>
+        <p id="displayUser"></p>
+        
+        <label for="exerciseName">Exercise Name:</label>
+        <input type="text" id="exerciseName" placeholder="Exercise Name">
+        
+        <label for="numericalValue">PR Value:</label>
+        <input type="number" id="numericalValue" placeholder="PR Value">
+        
+        <button onclick="addExercise()" class="add-exercise">Add Exercise</button>
+        <button onclick="showModal()" class="add-exercise">See the averages of the exercises</button>
+
+        
+    </div>
+    <div id="exerciseSummaryList"></div>
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <ul id="modalText">
+                
+            </ul>
+        </div>
+    </div>
+
+
+    <div class="navbar">
+        <!-- Navigation links -->
+        <div class="nav-links">
+            <a href="index.html" class="profile-link">
+                <img src="calendar.svg" alt="calendar" style="height: 30px; vertical-align: middle;">
+            </a>
+            <a href="profile.html" class="profile-link">
+                <img src="profile.png" alt="Profile" style="height: 30px; vertical-align: middle;">
+            </a>
+            <a href="progress.html" class="profile-link">
+                <img src="progress.svg" alt="progress" style="height: 30px; vertical-align: middle;">
+            </a>
+        </div>
+    </div>
+
+    <!-- Load Supabase library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+    const SUPABASE_URL = 'https://lsuwpborfzjjmtboajht.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxzdXdwYm9yZnpqam10Ym9hamh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzE2ODgzMTEsImV4cCI6MjA0NzI2NDMxMX0.gqe63IPUIhZi5mlnCN5xMkRY54W9TBVlIgu6FarSs1Q';
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    document.addEventListener("DOMContentLoaded", async function() {
+        const exerciseName = document.getElementById("exerciseName");
+        const prValue = document.getElementById("numericalValue");
+        const summaryList = document.getElementById("exerciseSummaryList");
+        const displayUser = document.getElementById("displayUser");
+        const logout = document.getElementById("logout");
+
+        const { data: { session }, error } = await supabaseClient.auth.getSession();
+
+        if (error || !session) {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        const authUuid = session.user.id;
+
+        async function loadUserExercises() {
+            const { data: exercises, error } = await supabaseClient
+                .from('user_profiles')
+                .select('id, auth_uuid, exercise, pr')
+                .eq('auth_uuid', authUuid);
+
+            if (error) {
+                console.error("Error fetching exercises:", error.message);
+                return;
+            }
+
+            exercises.forEach((exercise) => {
+                appendExerciseToList(exercise);
+            });
+        }
+
+        async function addExercise() {
+            let name = exerciseName.value;
+            let value = prValue.value;
+
+            exerciseName.value = "";
+            prValue.value = "";
+
+            const { data, error } = await supabaseClient
+                .from('user_profiles')
+                .insert([{ auth_uuid: authUuid, exercise: name, pr: value }])
+                .select();
+
+            if (error) {
+                console.error("Error adding exercise:", error.message);
+                return;
+            }
+
+            if (data && data.length > 0) {
+                appendExerciseToList(data[0]);
+            }
+        }
+
+        function appendExerciseToList(exercise) {
+            const exerciseContainer = document.createElement("div");
+            exerciseContainer.classList.add("exercise-container");
+
+            const displayText = document.createElement("span");
+            displayText.textContent = `${exercise.exercise}: ${exercise.pr}`;
+
+            const newInput = document.createElement("input");
+            newInput.type = "number";
+            newInput.value = exercise.pr;
+            newInput.style.display = "none";
+
+            const editButton = document.createElement("button");
+            editButton.classList.add("edit-button");
+            editButton.textContent = "Edit";
+
+            const deleteButton = document.createElement("button");
+            deleteButton.classList.add("delete-button");
+            deleteButton.textContent = "Delete";
+
+            exerciseContainer.appendChild(displayText);
+            exerciseContainer.appendChild(newInput);
+            exerciseContainer.appendChild(editButton);
+            exerciseContainer.appendChild(deleteButton);
+            summaryList.appendChild(exerciseContainer);
+
+            deleteButton.addEventListener("click", async function() {
+                const { error } = await supabaseClient
+                    .from('user_profiles')
+                    .delete()
+                    .eq('id', exercise.id);
+
+                if (error) {
+                    console.error("Error deleting exercise:", error.message);
+                    return;
+                }
+
+                exerciseContainer.remove();
+            });
+
+            editButton.addEventListener("click", async function() {
+                if (editButton.textContent === "Edit") {
+                    displayText.style.display = "none";
+                    newInput.style.display = "inline";
+                    editButton.textContent = "Save";
+                } else {
+                    const updatedValue = newInput.value;
+
+                    const { error } = await supabaseClient
+                        .from('user_profiles')
+                        .update({ pr: updatedValue })
+                        .eq('id', exercise.id);
+
+                    if (error) {
+                        console.error("Error updating exercise:", error.message);
+                        return;
+                    }
+
+                    displayText.textContent = `${exercise.exercise}: ${updatedValue}`;
+                    displayText.style.display = "inline";
+                    newInput.style.display = "none";
+                    editButton.textContent = "Edit";
+                }
+            });
+        }
+
+        function showModal() {
+            const modal = document.getElementById("myModal");
+            modal.style.display = "block";
+        }
+
+        function closeModal() {
+            const modal = document.getElementById("myModal");
+            modal.style.display = "none";
+        }
+
+
+        window.addExercise = addExercise;
+        window.showModal = showModal;
+        window.closeModal = closeModal;
+
+        loadUserExercises();
+    });
+</script>
+
+</body>
+</html>
+
